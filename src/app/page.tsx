@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatMessage } from "../../types/chat";
 
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("chat-messages");
+    if (saved) setMessages(JSON.parse(saved));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("chat-messages", JSON.stringify(messages));
+  }, [messages]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,7 +57,7 @@ export default function Home() {
       </div>
       <form onSubmit={handleSubmit} className="mt-4 flex gap-2 border-t pt-2 bg-white">
         <input
-          className="border p-2 flex-1 rounded-lg"
+          className="border p-2 flex-1 rounded-lg text-black bg-gray100"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
@@ -60,3 +69,4 @@ export default function Home() {
     </main>
   );
 }
+
